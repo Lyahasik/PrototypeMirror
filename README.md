@@ -1,1 +1,1 @@
-# PrototypeMirror
+# Prigorovskiy Alexey
