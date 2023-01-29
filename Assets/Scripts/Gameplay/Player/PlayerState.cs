@@ -8,6 +8,7 @@ namespace Gameplay.Player
     public class PlayerState : MonoBehaviour
     {
         private Settings _settings;
+        private PointStorage _pointStorage;
         
         private MeshRenderer[] _meshRenderers;
 
@@ -17,9 +18,10 @@ namespace Gameplay.Player
         public bool IsInvulnerable => _isInvulnerable;
 
         [Inject]
-        public void Construct(Settings settings)
+        public void Construct(Settings settings, PointStorage pointStorage)
         {
             _settings = settings;
+            _pointStorage = pointStorage;
         }
 
         private void Start()
@@ -27,6 +29,8 @@ namespace Gameplay.Player
             _meshRenderers = GetComponentsInChildren<MeshRenderer>();
 
             SaveBaseColors();
+
+            transform.position = _pointStorage.GetPoint().transform.position;
         }
 
         private void SaveBaseColors()

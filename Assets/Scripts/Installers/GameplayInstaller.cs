@@ -15,6 +15,10 @@ namespace Installers
                 .FromComponentInNewPrefab(_player)
                 .AsSingle()
                 .NonLazy();
+
+            Container
+                .BindInterfacesAndSelfTo<PointStorage>()
+                .AsSingle();
         }
     }
 }

@@ -1,10 +1,17 @@
 using UnityEngine;
+using Zenject;
 
 namespace Gameplay.Player
 {
     public class PlayerCamera : MonoBehaviour
     {
-        private float _mouseSensitivity = 300;
+        private Settings _settings;
+
+        [Inject]
+        public void Construct(Settings settings)
+        {
+            _settings = settings;
+        }
     
         private void Update()
         {
@@ -13,7 +20,7 @@ namespace Gameplay.Player
 
         private void Turn()
         {
-            float turnAngle = -Input.GetAxis("Mouse Y");
+            float turnAngle = -Input.GetAxis("Mouse Y") * _settings.MouseSensitivityMove * Time.deltaTime;
 
             transform.RotateAround(transform.parent.position, transform.right, turnAngle);
 
