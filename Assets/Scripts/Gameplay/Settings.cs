@@ -14,6 +14,9 @@ namespace Gameplay
         [Space]
         public float SpeedAttack;
         public float RangeAttack;
+
+        [Space]
+        public float TimeInvulnerable;
         
         [Header("Prefabs")]
         public PlayerCamera PlayerCamera;

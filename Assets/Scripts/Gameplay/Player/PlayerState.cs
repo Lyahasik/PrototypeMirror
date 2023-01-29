@@ -1,17 +1,26 @@
 using System.Collections;
 using UnityEngine;
+using Zenject;
 
 namespace Gameplay.Player
 {
     [RequireComponent(typeof(Collider))]
     public class PlayerState : MonoBehaviour
     {
+        private Settings _settings;
+        
         private MeshRenderer[] _meshRenderers;
 
         private Color[] _colorMeshes;
         private bool _isInvulnerable;
 
         public bool IsInvulnerable => _isInvulnerable;
+
+        [Inject]
+        public void Construct(Settings settings)
+        {
+            _settings = settings;
+        }
 
         private void Start()
         {
@@ -45,7 +54,7 @@ namespace Gameplay.Player
 
         private IEnumerator ResetState()
         {
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(_settings.TimeInvulnerable);
         
             for (int i = 0; i < _meshRenderers.Length; i++)
             {
