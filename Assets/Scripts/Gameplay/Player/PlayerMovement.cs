@@ -4,12 +4,14 @@ using Zenject;
 namespace Gameplay.Player
 {
     [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(PlayerAttack))]
     public class PlayerMovement : MonoBehaviour
     {
         private DiContainer _container;
         private Settings _settings;
     
         private CharacterController _characterController;
+        private PlayerAttack _playerAttack;
 
         [Inject]
         public void Construct(DiContainer container, Settings settings)
@@ -21,6 +23,7 @@ namespace Gameplay.Player
         private void Awake()
         {
             _characterController = GetComponent<CharacterController>();
+            _playerAttack = GetComponent<PlayerAttack>();
         }
 
         private void Start()
@@ -37,6 +40,9 @@ namespace Gameplay.Player
 
         private void Move()
         {
+            if (_playerAttack.IsActive)
+                return;
+                
             Vector3 step = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
             step = transform.TransformDirection(step);
 
@@ -45,6 +51,9 @@ namespace Gameplay.Player
 
         private void Turn()
         {
+            if (_playerAttack.IsActive)
+                return;
+            
             Vector3 turnStep = new Vector3(0f, Input.GetAxis("Mouse X"), 0f);
         
             transform.Rotate(turnStep * _settings.MouseSensitivityMove * Time.deltaTime, Space.World);
