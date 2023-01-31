@@ -1,11 +1,11 @@
-using System;
 using Gameplay.Player;
+using Gameplay.Spawn;
 using UnityEngine;
 
 namespace Gameplay
 {
-    [Serializable]
-    public class Settings
+    [CreateAssetMenu(fileName = "GameplaySettings", menuName = "ScriptableObjects/GameplaySettings", order = 1)]
+    public class Settings : ScriptableObject
     {
         [Header("Player")]
         public float SpeedMove;
@@ -17,7 +17,7 @@ namespace Gameplay
 
         [Space]
         public float TimeInvulnerable;
-        
+
         [Header("Prefabs")]
         public PlayerCamera PlayerCamera;
     }

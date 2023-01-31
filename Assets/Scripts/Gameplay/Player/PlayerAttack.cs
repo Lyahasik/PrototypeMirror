@@ -1,15 +1,15 @@
+using Mirror;
 using UnityEngine;
-using Zenject;
 
 namespace Gameplay.Player
 {
     [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(PlayerData))]
     [RequireComponent(typeof(PlayerState))]
-    public class PlayerAttack : MonoBehaviour
+    public partial class PlayerAttack : NetworkBehaviour
     {
-        private Settings _settings;
-        
         private CharacterController _characterController;
+        private PlayerData _playerData;
         private PlayerState _playerState;
 
         private float _distantion;
@@ -19,20 +19,20 @@ namespace Gameplay.Player
 
         public bool IsActive => _isActive;
 
-        [Inject]
-        public void Construct(Settings settings)
-        {
-            _settings = settings;
-        }
+        public partial void CmdChangePosition(Vector3 newValue);
 
         private void Awake()
         {
             _characterController = GetComponent<CharacterController>();
+            _playerData = GetComponent<PlayerData>();
             _playerState = GetComponent<PlayerState>();
         }
 
         private void Update()
         {
+            if (!isOwned)
+                return;
+            
             Attack();
             Move();
         }
@@ -52,14 +52,15 @@ namespace Gameplay.Player
         {
             if (!_isActive)
                 return;
-        
-            float step = _settings.SpeedAttack * Time.deltaTime;
+            
+            float step = _playerData.SpeedAttack * Time.deltaTime;
 
-            _distantion = Mathf.Clamp(_distantion + step, 0f, _settings.RangeAttack);
+            _distantion = Mathf.Clamp(_distantion + step, 0f, _playerData.RangeAttack);
 
             _characterController.Move(transform.forward * step);
+            CmdChangePosition(_characterController.transform.position);
 
-            if (_distantion == _settings.RangeAttack)
+            if (_distantion == _playerData.RangeAttack)
             {
                 _isActive = false;
                 _distantion = 0f;

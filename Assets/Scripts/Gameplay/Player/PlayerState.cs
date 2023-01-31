@@ -1,15 +1,14 @@
 using System.Collections;
+using Mirror;
 using UnityEngine;
-using Zenject;
 
 namespace Gameplay.Player
 {
     [RequireComponent(typeof(Collider))]
-    public class PlayerState : MonoBehaviour
+    [RequireComponent(typeof(PlayerData))]
+    public partial class PlayerState : NetworkBehaviour
     {
-        private Settings _settings;
-        private PointStorage _pointStorage;
-        
+        private PlayerData _playerData;
         private MeshRenderer[] _meshRenderers;
 
         private Color[] _colorMeshes;
@@ -17,20 +16,14 @@ namespace Gameplay.Player
 
         public bool IsInvulnerable => _isInvulnerable;
 
-        [Inject]
-        public void Construct(Settings settings, PointStorage pointStorage)
-        {
-            _settings = settings;
-            _pointStorage = pointStorage;
-        }
+        public partial void CmdChangeInvulnerable(bool newValue);
 
         private void Start()
         {
+            _playerData = GetComponent<PlayerData>();
             _meshRenderers = GetComponentsInChildren<MeshRenderer>();
 
             SaveBaseColors();
-
-            transform.position = _pointStorage.GetPoint().transform.position;
         }
 
         private void SaveBaseColors()
@@ -46,6 +39,12 @@ namespace Gameplay.Player
         public void TakeHit()
         {
             _isInvulnerable = true;
+            CmdChangeInvulnerable(_isInvulnerable);
+            InvulnerableActivate();
+        }
+
+        private partial void InvulnerableActivate()
+        {
             gameObject.layer = LayerMask.NameToLayer("IgnorePlayer");
 
             foreach (MeshRenderer meshRenderer in _meshRenderers)
@@ -58,7 +57,7 @@ namespace Gameplay.Player
 
         private IEnumerator ResetState()
         {
-            yield return new WaitForSeconds(_settings.TimeInvulnerable);
+            yield return new WaitForSeconds(_playerData.TimeInvulnerable);
         
             for (int i = 0; i < _meshRenderers.Length; i++)
             {
@@ -66,6 +65,7 @@ namespace Gameplay.Player
             }
 
             _isInvulnerable = false;
+            CmdChangeInvulnerable(_isInvulnerable);
             gameObject.layer = LayerMask.NameToLayer("Player");
         }
     }

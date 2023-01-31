@@ -1,36 +1,44 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PointStorage
+namespace Gameplay.Spawn
 {
-    private List<SpawnPoint> _spawnPoints = new ();
-
-    public void AddPoint(SpawnPoint point)
+    public class PointStorage
     {
-        _spawnPoints.Add(point);
-    }
+        private static List<SpawnPoint> _spawnPoints = new ();
 
-    public SpawnPoint GetPoint()
-    {
-        while (true)
+        public static void AddPoint(SpawnPoint point)
         {
-            int index = Random.Range(0, _spawnPoints.Count);
-
-            SpawnPoint point = _spawnPoints[index];
-            
-            if (point.IsLock)
-                continue;
-            
-            point.IsLock = true;
-            return point;
+            _spawnPoints.Add(point);
         }
-    }
 
-    public void UnlockedPoints()
-    {
-        foreach (SpawnPoint point in _spawnPoints)
+        public static void RemovePoint(SpawnPoint point)
         {
-            point.IsLock = false;
+            _spawnPoints.Remove(point);
+        }
+
+        public static SpawnPoint GetPoint()
+        {
+            while (true)
+            {
+                int index = Random.Range(0, _spawnPoints.Count);
+
+                SpawnPoint point = _spawnPoints[index];
+            
+                if (point.IsLock)
+                    continue;
+            
+                point.IsLock = true;
+                return point;
+            }
+        }
+
+        public void UnlockedPoints()
+        {
+            foreach (SpawnPoint point in _spawnPoints)
+            {
+                point.IsLock = false;
+            }
         }
     }
 }

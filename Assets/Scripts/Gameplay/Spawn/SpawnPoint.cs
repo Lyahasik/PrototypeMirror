@@ -1,26 +1,25 @@
 using UnityEngine;
-using Zenject;
 
-public class SpawnPoint : MonoBehaviour
+namespace Gameplay.Spawn
 {
-    private PointStorage _pointStorage;
-
-    private bool _isLock;
-
-    public bool IsLock
+    public class SpawnPoint : MonoBehaviour
     {
-        get => _isLock;
-        set => _isLock = value;
-    }
+        private bool _isLock;
 
-    [Inject]
-    public void Construct(PointStorage pointStorage)
-    {
-        _pointStorage = pointStorage;
-    }
+        public bool IsLock
+        {
+            get => _isLock;
+            set => _isLock = value;
+        }
 
-    private void Start()
-    {
-        _pointStorage.AddPoint(this);
+        private void OnEnable()
+        {
+            PointStorage.AddPoint(this);
+        }
+
+        private void OnDisable()
+        {
+            PointStorage.RemovePoint(this);
+        }
     }
 }

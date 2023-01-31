@@ -1,39 +1,40 @@
+using Mirror;
 using UnityEngine;
-using Zenject;
 
 namespace Gameplay.Player
 {
     [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(PlayerData))]
     [RequireComponent(typeof(PlayerAttack))]
-    public class PlayerMovement : MonoBehaviour
+    public partial class PlayerMovement : NetworkBehaviour
     {
-        private DiContainer _container;
-        private Settings _settings;
-    
         private CharacterController _characterController;
+        private PlayerData _playerData;
         private PlayerAttack _playerAttack;
 
-        [Inject]
-        public void Construct(DiContainer container, Settings settings)
-        {
-            _container = container;
-            _settings = settings;
-        }
+        public partial void CmdChangePosition(Vector3 newValue);
+        public partial void CmdChangeRotation(Quaternion newValue);
 
         private void Awake()
         {
             _characterController = GetComponent<CharacterController>();
+            _playerData = GetComponent<PlayerData>();
             _playerAttack = GetComponent<PlayerAttack>();
         }
 
         private void Start()
         {
-            _container
-                .InstantiatePrefab(_settings.PlayerCamera, transform);
+            if (!isOwned)
+                return;
+            
+            Instantiate(_playerData.PlayerCamera, transform).PlayerData = _playerData;
         }
 
         void Update()
         {
+            if (!isOwned)
+                return;
+            
             Move();
             Turn();
         }
@@ -46,7 +47,8 @@ namespace Gameplay.Player
             Vector3 step = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
             step = transform.TransformDirection(step);
 
-            _characterController.Move(step * _settings.SpeedMove * Time.deltaTime);
+            _characterController.Move(step * _playerData.SpeedMove * Time.deltaTime);
+            CmdChangePosition(_characterController.transform.position);
         }
 
         private void Turn()
@@ -56,7 +58,8 @@ namespace Gameplay.Player
             
             Vector3 turnStep = new Vector3(0f, Input.GetAxis("Mouse X"), 0f);
         
-            transform.Rotate(turnStep * _settings.MouseSensitivityMove * Time.deltaTime, Space.World);
+            transform.Rotate(turnStep * _playerData.MouseSensitivityMove * Time.deltaTime, Space.World);
+            CmdChangeRotation(transform.rotation);
         }
     }
 }

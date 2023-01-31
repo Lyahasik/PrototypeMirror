@@ -1,16 +1,14 @@
 using UnityEngine;
-using Zenject;
 
 namespace Gameplay.Player
 {
     public class PlayerCamera : MonoBehaviour
     {
-        private Settings _settings;
+        private PlayerData _playerData;
 
-        [Inject]
-        public void Construct(Settings settings)
+        public PlayerData PlayerData
         {
-            _settings = settings;
+            set => _playerData = value;
         }
     
         private void Update()
@@ -20,7 +18,7 @@ namespace Gameplay.Player
 
         private void Turn()
         {
-            float turnAngle = -Input.GetAxis("Mouse Y") * _settings.MouseSensitivityMove * Time.deltaTime;
+            float turnAngle = -Input.GetAxis("Mouse Y") * _playerData.MouseSensitivityMove * Time.deltaTime;
 
             transform.RotateAround(transform.parent.position, transform.right, turnAngle);
 
