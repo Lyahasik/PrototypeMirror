@@ -16,7 +16,8 @@ namespace Gameplay.Player
 
         public bool IsInvulnerable => _isInvulnerable;
 
-        public partial void CmdChangeInvulnerable(bool newValue);
+        public partial void RpcInvulnerableActivate();
+        public partial void CmdInvulnerableActivate();
 
         private void Start()
         {
@@ -39,7 +40,12 @@ namespace Gameplay.Player
         public void TakeHit()
         {
             _isInvulnerable = true;
-            CmdChangeInvulnerable(_isInvulnerable);
+            
+            if (isServer)
+                RpcInvulnerableActivate();
+            else
+                CmdInvulnerableActivate();
+            
             InvulnerableActivate();
         }
 
@@ -52,20 +58,24 @@ namespace Gameplay.Player
                 meshRenderer.material.color = Color.red;
             }
 
-            StartCoroutine(ResetState());
+            StartCoroutine(DelayedReset());
         }
 
-        private IEnumerator ResetState()
+        private IEnumerator DelayedReset()
         {
             yield return new WaitForSeconds(_playerData.TimeInvulnerable);
         
+            Reset();
+        }
+
+        public void Reset()
+        {
             for (int i = 0; i < _meshRenderers.Length; i++)
             {
                 _meshRenderers[i].material.color = _colorMeshes[i];
             }
 
             _isInvulnerable = false;
-            CmdChangeInvulnerable(_isInvulnerable);
             gameObject.layer = LayerMask.NameToLayer("Player");
         }
     }

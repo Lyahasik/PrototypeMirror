@@ -16,5 +16,6 @@ namespace Gameplay.Player
         public float TimeInvulnerable => _settings.TimeInvulnerable;
 
         public PlayerCamera PlayerCamera => _settings.PlayerCamera;
+        public GameplayManager GameplayManager => _settings.GameplayManager;
     }
 }

@@ -11,7 +11,7 @@ namespace Gameplay.Player
         [SyncVar(hook = nameof(SyncRotation))]
         private Quaternion _syncRotation;
     
-        void SyncPosition(Vector3 oldValue, Vector3 newValue)
+        private void SyncPosition(Vector3 oldValue, Vector3 newValue)
         {
             transform.position = newValue;
         }
@@ -28,7 +28,7 @@ namespace Gameplay.Player
             ChangePositionValue(newValue);
         }
     
-        void SyncRotation(Quaternion oldValue, Quaternion newValue)
+        private void SyncRotation(Quaternion oldValue, Quaternion newValue)
         {
             transform.rotation = newValue;
         }

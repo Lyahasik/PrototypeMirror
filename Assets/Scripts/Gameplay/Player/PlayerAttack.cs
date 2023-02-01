@@ -8,6 +8,8 @@ namespace Gameplay.Player
     [RequireComponent(typeof(PlayerState))]
     public partial class PlayerAttack : NetworkBehaviour
     {
+        private const int targetHit = 3;
+
         private CharacterController _characterController;
         private PlayerData _playerData;
         private PlayerState _playerState;
@@ -19,6 +21,8 @@ namespace Gameplay.Player
 
         public bool IsActive => _isActive;
 
+        public partial void RpcVictory(string nickname);
+        public partial void CmdVictory(string nickname);
         public partial void CmdChangePosition(Vector3 newValue);
 
         private void Awake()
@@ -30,11 +34,34 @@ namespace Gameplay.Player
 
         private void Update()
         {
-            if (!isOwned)
+            if (GameplayManager.IsPause
+                || !isOwned)
                 return;
             
             Attack();
             Move();
+        }
+        
+        private void OnControllerColliderHit(ControllerColliderHit hit)
+        {
+            if (!_isActive)
+                return;
+            
+            PlayerState player = hit.gameObject.GetComponent<PlayerState>();
+            
+            if (player)
+            {
+                _countHit++;
+                player.TakeHit();
+
+                if (_countHit >= targetHit)
+                {
+                    if (isServer)
+                        RpcVictory($"Player { player.netId }");
+                    else
+                        CmdVictory($"Player { player.netId }");
+                }
+            }
         }
 
         private void Attack()
@@ -61,24 +88,19 @@ namespace Gameplay.Player
             CmdChangePosition(_characterController.transform.position);
 
             if (_distantion == _playerData.RangeAttack)
-            {
-                _isActive = false;
-                _distantion = 0f;
-            }
+                StopAttack();
         }
-        
-        private void OnControllerColliderHit(ControllerColliderHit hit)
+
+        private void StopAttack()
         {
-            if (!_isActive)
-                return;
-            
-            PlayerState player = hit.gameObject.GetComponent<PlayerState>();
-            
-            if (player)
-            {
-                _countHit++;
-                player.TakeHit();
-            }
+            _isActive = false;
+            _distantion = 0f;
+        }
+
+        public void Reset()
+        {
+            StopAttack();
+            _countHit = 0;
         }
     }
 }

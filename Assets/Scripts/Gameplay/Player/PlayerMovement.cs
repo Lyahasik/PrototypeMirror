@@ -1,3 +1,4 @@
+using Gameplay.Spawn;
 using Mirror;
 using UnityEngine;
 
@@ -30,9 +31,10 @@ namespace Gameplay.Player
             Instantiate(_playerData.PlayerCamera, transform).PlayerData = _playerData;
         }
 
-        void Update()
+        private void Update()
         {
-            if (!isOwned)
+            if (GameplayManager.IsPause
+                || !isOwned)
                 return;
             
             Move();
@@ -60,6 +62,20 @@ namespace Gameplay.Player
         
             transform.Rotate(turnStep * _playerData.MouseSensitivityMove * Time.deltaTime, Space.World);
             CmdChangeRotation(transform.rotation);
+        }
+
+        public void Reset()
+        {
+            if (!isOwned)
+                return;
+            
+            _characterController.enabled = false;
+
+            transform.position = PointStorage.GetPoint().transform.position;
+            
+            _characterController.enabled = true;
+            
+            CmdChangePosition(transform.position);
         }
     }
 }

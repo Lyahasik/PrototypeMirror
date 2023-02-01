@@ -33,7 +33,7 @@ namespace Gameplay.Spawn
             }
         }
 
-        public void UnlockedPoints()
+        public static void UnlockedPoints()
         {
             foreach (SpawnPoint point in _spawnPoints)
             {

@@ -283,7 +283,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
-  _settings: {fileID: 11400000, guid: 480433a04c6d7224ba8fcf1e503073c3, type: 2}
 --- !u!143 &1374372061667741143
 CharacterController:
   m_ObjectHideFlags: 0

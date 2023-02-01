@@ -16,9 +16,6 @@ MonoBehaviour:
   MouseSensitivityMove: 300
   SpeedAttack: 45
   RangeAttack: 15
-  TimeInvulnerable: 3
-  SpawnPoints:
-  - Position: {x: -10, y: 0, z: 10}
-  - Position: {x: 10, y: 0, z: -10}
-  - Position: {x: 0, y: 0, z: 0}
+  TimeInvulnerable: 1
   PlayerCamera: {fileID: 1185912071, guid: 3dc90a11d7c09fa45900a7ec81aeaa72, type: 3}
+  WindowVictory: {fileID: 0}

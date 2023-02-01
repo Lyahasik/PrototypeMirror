@@ -13,6 +13,9 @@ namespace Gameplay.Player
     
         private void Update()
         {
+            if (GameplayManager.IsPause)
+                return;
+            
             Turn();
         }
 

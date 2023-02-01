@@ -8,7 +8,7 @@ namespace Gameplay.Player
         [SyncVar(hook = nameof(SyncPosition))]
         private Vector3 _syncPosition;
 
-        void SyncPosition(Vector3 oldValue, Vector3 newValue)
+        private void SyncPosition(Vector3 oldValue, Vector3 newValue)
         {
             transform.position = newValue;
         }
@@ -24,5 +24,18 @@ namespace Gameplay.Player
         {
             ChangePositionValue(newValue);
         }
+        
+        [ClientRpc]
+        public partial void RpcVictory(string nickname)
+        {
+            _playerData.GameplayManager.DeclareVictory(gameObject, nickname);
+        }
+        
+        [Command]
+        public partial void CmdVictory(string nickname)
+        {
+            RpcVictory(nickname);
+        }
+        
     }
 }

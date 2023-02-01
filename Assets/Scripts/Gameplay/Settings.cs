@@ -1,5 +1,4 @@
 using Gameplay.Player;
-using Gameplay.Spawn;
 using UnityEngine;
 
 namespace Gameplay
@@ -20,5 +19,6 @@ namespace Gameplay
 
         [Header("Prefabs")]
         public PlayerCamera PlayerCamera;
+        public GameplayManager GameplayManager;
     }
 }

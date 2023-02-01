@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Gameplay.Spawn;
 using Mirror;
 using UnityEngine;
@@ -7,6 +8,8 @@ namespace Network.Room
 {
     public class RoomManager : NetworkRoomManager
     {
+        private List<GameObject> _players = new ();
+
         private bool _isShownStartButton;
 
         public override void OnRoomServerPlayersReady()
@@ -29,14 +32,6 @@ namespace Network.Room
                 ServerChangeScene(GameplayScene);
             }
         }
-
-        public override Transform GetStartPosition()
-        {
-            Transform transformPosition = new GameObject().transform;
-            transformPosition.position = PointStorage.GetPoint().transform.position;
-
-            return transformPosition;
-        }
     
         public override void OnServerReady(NetworkConnectionToClient conn)
         {
@@ -55,10 +50,12 @@ namespace Network.Room
     
         public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
         {
-            GameObject player = Instantiate(playerPrefab);
-            player.transform.position = PointStorage.GetPoint().transform.position;
+            GameObject gamePlayer = Instantiate(playerPrefab);
+            gamePlayer.transform.position = PointStorage.GetPoint().transform.position;
+            
+            _players.Add(gamePlayer);
         
-            return player;
+            return gamePlayer;
         }
     
         void SceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
@@ -79,6 +76,8 @@ namespace Network.Room
             {
                 gamePlayer = Instantiate(playerPrefab);
                 gamePlayer.transform.position = PointStorage.GetPoint().transform.position;
+                
+                _players.Add(gamePlayer);
             }
 
             if (!OnRoomServerSceneLoadedForPlayer(conn, roomPlayer, gamePlayer))
