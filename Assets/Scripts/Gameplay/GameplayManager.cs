@@ -19,6 +19,7 @@ namespace Gameplay
 
         private void Awake()
         {
+            Cursor.lockState = CursorLockMode.Locked;
             _settings.GameplayManager = this;
         }
 
@@ -30,6 +31,7 @@ namespace Gameplay
 
         public void DeclareVictory(GameObject player, string nickname)
         {
+            Cursor.lockState = CursorLockMode.None;
             _isPause = true;
         
             _windowVictory.Activate(nickname);
@@ -50,7 +52,8 @@ namespace Gameplay
             player.GetComponent<PlayerMovement>()?.Reset();
 
             _windowVictory.Deactivate();
-        
+            
+            Cursor.lockState = CursorLockMode.Locked;
             _isPause = false;
         }
     }
